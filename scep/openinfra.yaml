@@ -1,0 +1,40 @@
+openinfra: 1.0.0
+info:
+  title: OpenInfra Specification
+  description: A specification for describing infrastructure resources and components.
+  version: 1.0.0
+  contact:
+    name: Your Name
+    email: your.email@example.com
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+
+resources:
+  - type: virtual_machine
+    name: local_vm
+    properties:
+      hypervisor: virtualbox
+      cpu: 2
+      memory: 4GB
+      disk_size: 50GB
+      os: ubuntu-22.04
+      network: local_network
+    actions:
+      - start
+      - stop
+      - restart
+
+  - type: network
+    name: local_network
+    properties:
+      cidr: 192.168.1.0/24
+      gateway: 192.168.1.1
+      dns_servers:
+        - 8.8.8.8
+        - 8.8.4.4
+
+dependencies:
+  - resource: local_vm
+    depends_on:
+      - local_network
