@@ -1,0 +1,153 @@
+openinfra: 1.0.0
+info:
+  title: Cloud Infrastructure Example
+  description: An example of a cloud infrastructure using OpenInfra.
+  version: 1.0.0
+  contact:
+    name: Your Name
+    email: your.email@example.com
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+
+resources:
+  - type: virtual_machine
+    name: web_server
+    properties:
+      provider: aws
+      instance_type: t2.micro
+      cpu: 1
+      memory: 1GB
+      disk_size: 30GB
+      os: amazon-linux-2
+      network: public_subnet
+      security_groups:
+        - web_sg
+    actions:
+      - create
+      - start
+      - stop
+      - delete
+
+  - type: virtual_machine
+    name: db_server
+    properties:
+      provider: aws
+      instance_type: t2.medium
+      cpu: 2
+      memory: 4GB
+      disk_size: 100GB
+      os: ubuntu-20.04
+      network: private_subnet
+      security_groups:
+        - db_sg
+    actions:
+      - create
+      - start
+      - stop
+      - delete
+
+  - type: network
+    name: public_subnet
+    properties:
+      provider: aws
+      cidr: 10.0.1.0/24
+      gateway: 10.0.1.1
+      dns_servers:
+        - 8.8.8.8
+        - 8.8.4.4
+    actions:
+      - create
+      - delete
+
+  - type: network
+    name: private_subnet
+    properties:
+      provider: aws
+      cidr: 10.0.2.0/24
+      gateway: 10.0.2.1
+      dns_servers:
+        - 8.8.8.8
+        - 8.8.4.4
+    actions:
+      - create
+      - delete
+
+  - type: database
+    name: main_db
+    properties:
+      provider: aws
+      engine: mysql
+      version: 5.7
+      storage: 100GB
+      instance_type: db.t2.micro
+      network: private_subnet
+      security_groups:
+        - db_sg
+    actions:
+      - create
+      - delete
+
+  - type: load_balancer
+    name: web_lb
+    properties:
+      provider: aws
+      type: application
+      listeners:
+        - protocol: HTTP
+          port: 80
+          target_port: 80
+      network: public_subnet
+      security_groups:
+        - web_sg
+    actions:
+      - create
+      - delete
+
+  - type: security_group
+    name: web_sg
+    properties:
+      provider: aws
+      rules:
+        - protocol: tcp
+          from_port: 80
+          to_port: 80
+          cidr: 0.0.0.0/0
+        - protocol: tcp
+          from_port: 22
+          to_port: 22
+          cidr: 192.168.1.0/24
+    actions:
+      - create
+      - delete
+
+  - type: security_group
+    name: db_sg
+    properties:
+      provider: aws
+      rules:
+        - protocol: tcp
+          from_port: 3306
+          to_port: 3306
+          cidr: 10.0.1.0/24
+    actions:
+      - create
+      - delete
+
+dependencies:
+  - resource: web_server
+    depends_on:
+      - public_subnet
+      - web_sg
+  - resource: db_server
+    depends_on:
+      - private_subnet
+      - db_sg
+  - resource: main_db
+    depends_on:
+      - private_subnet
+      - db_sg
+  - resource: web_lb
+    depends_on:
+      - public_subnet
+      - web_sg
