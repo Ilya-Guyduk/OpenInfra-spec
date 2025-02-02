@@ -10,11 +10,25 @@ info:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0
 
-resources:
+providers:
+  - name: virtualbox
+    type: hypervisor
+    connection_details:
+      address: 192.168.1.10  # Адрес гипервизора
+      username: admin        # Имя пользователя
+      password: password     # Пароль или ключ доступа
+
+  - name: cloud_provider
+    type: cloud
+    connection_details:
+      api_endpoint: https://api.cloudprovider.com  # API для создания ресурсов
+      api_key: your_api_key_here                  # Ключ API для аутентификации
+
+components:
   - type: virtual_machine
     name: local_vm
+    provider: virtualbox
     properties:
-      hypervisor: virtualbox
       cpu: 2
       memory: 4GB
       disk_size: 50GB
@@ -27,6 +41,7 @@ resources:
 
   - type: network
     name: local_network
+    provider: cloud_provider
     properties:
       cidr: 192.168.1.0/24
       gateway: 192.168.1.1
@@ -35,6 +50,6 @@ resources:
         - 8.8.4.4
 
 dependencies:
-  - resource: local_vm
+  - component: local_vm
     depends_on:
       - local_network
