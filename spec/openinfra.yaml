@@ -11,15 +11,15 @@ info:
     url: https://www.apache.org/licenses/LICENSE-2.0
 
 providers:
-  - name: virtualbox
-    type: hypervisor
+  - name: local_virtualbox
+    type: virtualbox
     connection_details:
       address: 192.168.1.10  # Адрес гипервизора
       username: admin        # Имя пользователя
       password: password     # Пароль или ключ доступа
 
   - name: cloud_provider
-    type: cloud
+    type: aws
     connection_details:
       api_endpoint: https://api.cloudprovider.com  # API для создания ресурсов
       api_key: your_api_key_here                  # Ключ API для аутентификации
@@ -27,7 +27,7 @@ providers:
 components:
   - type: virtual_machine
     name: local_vm
-    provider: virtualbox
+    provider: local_virtualbox
     properties:
       cpu: 2
       memory: 4GB
