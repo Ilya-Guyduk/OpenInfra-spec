@@ -143,9 +143,27 @@ components:
       os: ubuntu-22.04
       network: local_network
     actions:
-      - start
-      - stop
-      - restart
+      - name: start
+        method: POST
+        endpoint: /vms/{vm_id}/start
+        parameters:
+          - name: vm_id
+            type: string
+            required: true
+      - name: stop
+        method: POST
+        endpoint: /vms/{vm_id}/stop
+        parameters:
+          - name: vm_id
+            type: string
+            required: true
+      - name: restart
+        method: POST
+        endpoint: /vms/{vm_id}/restart
+        parameters:
+          - name: vm_id
+            type: string
+            required: true
 
   - type: network
     name: local_network
@@ -156,6 +174,21 @@ components:
       dns_servers:
         - 8.8.8.8
         - 8.8.4.4
+    actions:
+      - name: create
+        method: POST
+        endpoint: /vms/create
+        parameters:
+          - name: cidr
+            type: string
+            required: true
+      - name: delete
+        method: DELETE
+        endpoint: /vms/{network_id}
+        parameters:
+          - name: network_id
+            type: string
+            required: true
 
 dependencies:
   - component: local_vm
