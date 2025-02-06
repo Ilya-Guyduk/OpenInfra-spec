@@ -30,30 +30,60 @@
       },
       "required": ["title", "version"]
     },
-    "resources": {
+    "providers": {
       "type": "array",
       "items": {
         "type": "object",
         "properties": {
-          "type": { "type": "string" },
           "name": { "type": "string" },
-          "properties": { "type": "object" },
-          "actions": { "type": "array" }
+          "type": { "type": "string" },
+          "connection": {
+            "type": "object",
+            "properties": {
+              "protocol": { "type": "string" },
+              "host": { "type": "string" },
+              "port": { "type": "integer" },
+              "authentication": {
+                "type": "object",
+                "properties": {
+                  "method": { "type": "string" },
+                  "username": { "type": "string" },
+                  "password": { "type": "string" },
+                  "api_key": { "type": "string" }
+                }
+              }
+            },
+            "required": ["protocol"]
+          },
+          "capabilities": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": { "type": "string" },
+                "description": { "type": "string" },
+                "method": { "type": "string" },
+                "endpoint": { "type": "string" },
+                "parameters": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": { "type": "string" },
+                      "type": { "type": "string" },
+                      "required": { "type": "boolean" }
+                    },
+                    "required": ["name", "type"]
+                  }
+                }
+              },
+              "required": ["name", "method", "endpoint"]
+            }
+          }
         },
-        "required": ["type", "name"]
-      }
-    },
-    "dependencies": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "resource": { "type": "string" },
-          "depends_on": { "type": "array" }
-        },
-        "required": ["resource", "depends_on"]
+        "required": ["name", "type", "connection", "capabilities"]
       }
     }
   },
-  "required": ["openinfra", "info", "resources"]
+  "required": ["openinfra", "info", "providers"]
 }
