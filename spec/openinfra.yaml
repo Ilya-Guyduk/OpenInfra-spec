@@ -13,16 +13,124 @@ info:
 providers:
   - name: local_virtualbox
     type: virtualbox
-    connection_details:
-      address: 192.168.1.10  # Адрес гипервизора
-      username: admin        # Имя пользователя
-      password: password     # Пароль или ключ доступа
+    connection:
+      protocol: ssh
+      host: 192.168.1.10
+      port: 22
+      authentication:
+        method: password
+        username: admin
+        password: password
+    capabilities:
+      - name: create_vm
+        description: Create a new virtual machine
+        method: POST
+        endpoint: /vms/create
+        parameters:
+          - name: name
+            type: string
+            required: true
+          - name: cpu
+            type: integer
+            required: true
+          - name: memory
+            type: string
+            required: true
+      - name: delete_vm
+        description: Delete an existing virtual machine
+        method: DELETE
+        endpoint: /vms/{vm_id}
+        parameters:
+          - name: vm_id
+            type: string
+            required: true
+      - name: start_vm
+        description: Start a virtual machine
+        method: POST
+        endpoint: /vms/{vm_id}/start
+        parameters:
+          - name: vm_id
+            type: string
+            required: true
+      - name: stop_vm
+        description: Stop a virtual machine
+        method: POST
+        endpoint: /vms/{vm_id}/stop
+        parameters:
+          - name: vm_id
+            type: string
+            required: true
+      - name: restart_vm
+        description: Restart a virtual machine
+        method: POST
+        endpoint: /vms/{vm_id}/restart
+        parameters:
+          - name: vm_id
+            type: string
+            required: true
+      - name: list_vms
+        description: List all virtual machines
+        method: GET
+        endpoint: /vms
+        parameters: []
 
   - name: cloud_provider
     type: aws
-    connection_details:
-      api_endpoint: https://api.cloudprovider.com  # API для создания ресурсов
-      api_key: your_api_key_here                  # Ключ API для аутентификации
+    connection:
+      protocol: https
+      endpoint: https://api.cloudprovider.com
+      authentication:
+        method: api_key
+        api_key: your_api_key_here
+    capabilities:
+      - name: create_instance
+        description: Create a new cloud instance
+        method: POST
+        endpoint: /instances/create
+        parameters:
+          - name: instance_type
+            type: string
+            required: true
+          - name: image_id
+            type: string
+            required: true
+      - name: delete_instance
+        description: Delete a cloud instance
+        method: DELETE
+        endpoint: /instances/{instance_id}
+        parameters:
+          - name: instance_id
+            type: string
+            required: true
+      - name: start_instance
+        description: Start a cloud instance
+        method: POST
+        endpoint: /instances/{instance_id}/start
+        parameters:
+          - name: instance_id
+            type: string
+            required: true
+      - name: stop_instance
+        description: Stop a cloud instance
+        method: POST
+        endpoint: /instances/{instance_id}/stop
+        parameters:
+          - name: instance_id
+            type: string
+            required: true
+      - name: restart_instance
+        description: Restart a cloud instance
+        method: POST
+        endpoint: /instances/{instance_id}/restart
+        parameters:
+          - name: instance_id
+            type: string
+            required: true
+      - name: list_instances
+        description: List all cloud instances
+        method: GET
+        endpoint: /instances
+        parameters: []
 
 components:
   - type: virtual_machine
